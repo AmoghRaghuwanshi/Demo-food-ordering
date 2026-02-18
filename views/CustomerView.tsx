@@ -72,7 +72,6 @@ const CustomerView: React.FC<CustomerViewProps> = ({
   const totalGst = useMemo(() => cart.reduce((acc, item) => acc + (item.price * item.quantity * item.gstRate) / 100, 0), [cart]);
   const cartTotal = cartSubtotal + totalGst + deliveryCharge - discount;
 
-  // Initialize Google Maps
   useEffect(() => {
     if (activeTab === 'cart' && cart.length > 0) {
       const timer = setTimeout(() => {
@@ -102,14 +101,12 @@ const CustomerView: React.FC<CustomerViewProps> = ({
 
           mapInstanceRef.current = map;
           markerRef.current = marker;
-          
-          // Initial trigger
           setSelectedLocation({ lat: restaurantLocation.lat, lng: restaurantLocation.lng });
         }
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [activeTab, cart.length]);
+  }, [activeTab, cart.length, restaurantLocation]);
 
   const inputClass = "w-full border-2 border-slate-100 bg-slate-50 p-4 rounded-2xl text-sm focus:bg-white focus:border-orange-500 outline-none transition-all placeholder:text-slate-400 text-slate-900 shadow-sm min-h-[56px]";
 
@@ -127,8 +124,6 @@ const CustomerView: React.FC<CustomerViewProps> = ({
       return i;
     }));
   };
-
-  const freeDeliveryRemaining = freeDeliveryThreshold - (cartSubtotal - discount);
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-white pb-24 relative shadow-2xl flex flex-col overflow-hidden">
@@ -150,10 +145,10 @@ const CustomerView: React.FC<CustomerViewProps> = ({
         {activeTab === 'menu' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-4">
-              {menu.map(item => (
+              {menu.map((item: MenuItem) => (
                 <Card key={item.id} className="flex gap-4 p-4 shadow-sm ripple">
                   <div className="relative shrink-0">
-                    <img src={item.image} className="w-24 h-24 rounded-[2rem] object-cover bg-slate-100 shadow-md" />
+                    <img src={item.image} className="w-24 h-24 rounded-[2rem] object-cover bg-slate-100 shadow-md" alt={item.name} />
                     {item.isVeg && <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-lg border-2 border-green-600 p-1 flex items-center justify-center"><div className="w-full h-full rounded-full bg-green-600"></div></div>}
                   </div>
                   <div className="flex-1 flex flex-col justify-between min-w-0">
@@ -183,7 +178,7 @@ const CustomerView: React.FC<CustomerViewProps> = ({
             ) : (
               <div className="space-y-8 pb-12">
                 <div className="space-y-3">
-                  {cart.map((item) => (
+                  {cart.map((item: CartItem) => (
                     <div key={item.id} className="flex justify-between items-center bg-white p-5 rounded-3xl shadow-sm border border-slate-50">
                       <div className="flex-1 min-w-0 pr-4">
                         <h4 className="font-black text-sm text-slate-800 truncate">{item.name}</h4>
@@ -243,7 +238,7 @@ const CustomerView: React.FC<CustomerViewProps> = ({
         {activeTab === 'track' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">Active Orders</h2>
-            {orders.length === 0 ? <p className="text-center italic text-slate-400">No orders placed yet.</p> : orders.map(order => (
+            {orders.length === 0 ? <p className="text-center italic text-slate-400">No orders placed yet.</p> : orders.map((order: Order) => (
               <Card key={order.id} className="p-6 shadow-xl rounded-[2.5rem]">
                 <div className="flex justify-between items-start mb-4">
                   <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">#{order.id.slice(0, 8)}</p></div>
@@ -282,7 +277,7 @@ const CustomerView: React.FC<CustomerViewProps> = ({
               <div className="space-y-4 text-sm font-bold text-slate-600">
                 <p>Order ID: {selectedOrderForInvoice.id.slice(0, 10)}</p>
                 <div className="border-t border-dashed py-4">
-                  {selectedOrderForInvoice.items.map(item => (
+                  {selectedOrderForInvoice.items.map((item: CartItem) => (
                     <div key={item.id} className="flex justify-between"><span>{item.quantity}x {item.name}</span><span>₹{item.price * item.quantity}</span></div>
                   ))}
                 </div>

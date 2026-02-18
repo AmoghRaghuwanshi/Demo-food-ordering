@@ -38,7 +38,7 @@ const App: React.FC = () => {
     address: DetailedAddress, 
     deliveryCharge: number, 
     appliedOffer: Offer | null, 
-    location: { lat: number; lng: number }
+    location?: { lat: number; lng: number } // Fixed: Location is optional in callback
   ) => {
     let calculatedDiscount = 0;
     if (appliedOffer && subtotal >= appliedOffer.minCartValue) {
@@ -69,7 +69,7 @@ const App: React.FC = () => {
       customerName: userSession?.phone || 'Guest',
       address,
       phone: userSession?.phone || '',
-      location
+      location: location || DEFAULT_RESTAURANT_LOC
     };
 
     setOrders(prev => [newOrder, ...prev]);
