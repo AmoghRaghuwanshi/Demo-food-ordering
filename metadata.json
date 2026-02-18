@@ -1,0 +1,13 @@
+{
+  "name": "BistroFlow",
+  "short_name": "BistroFlow",
+  "description": "Mobile-first single restaurant management & ordering app. Dedicated experience for Android users and restaurant owners.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ],
+  "theme_color": "#f97316",
+  "background_color": "#f8fafc",
+  "display": "standalone",
+  "orientation": "portrait"
+}
