@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { MenuItem, Order, OrderStatus, ViewMode, CartItem, UserSession, Offer, DetailedAddress } from './types';
 import { INITIAL_MENU } from './constants';
@@ -10,12 +9,12 @@ const OWNER_PHONE = '9876543210';
 const DEFAULT_RESTAURANT_LOC = { lat: 28.6139, lng: 77.2090 };
 
 const App: React.FC = () => {
-  const [menu, setMenu] = useState<MenuItem[]>(INITIAL_MENU.map(item => ({ ...item, gstRate: 5 })));
+  const [menu, setMenu] = useState<MenuItem[]>(INITIAL_MENU.map((item: MenuItem) => ({ ...item, gstRate: 5 })));
   const [orders, setOrders] = useState<Order[]>([]);
   const [isRestaurantLive, setIsRestaurantLive] = useState(true);
   const [deliveryRatePerKm, setDeliveryRatePerKm] = useState(40);
   const [freeDeliveryThreshold, setFreeDeliveryThreshold] = useState(500);
-  const [offers, setOffers] = useState<Offer[]>([
+  const [offers] = useState<Offer[]>([
     { id: 'off1', code: 'WELCOME50', description: '₹50 off on orders above ₹500', type: 'fixed', value: 50, minCartValue: 500, isActive: true }
   ]);
   const [viewMode, setViewMode] = useState<ViewMode>('auth');
@@ -38,7 +37,7 @@ const App: React.FC = () => {
     address: DetailedAddress, 
     deliveryCharge: number, 
     appliedOffer: Offer | null, 
-    location?: { lat: number; lng: number } // Fixed: Location is optional in callback
+    location?: { lat: number; lng: number }
   ) => {
     let calculatedDiscount = 0;
     if (appliedOffer && subtotal >= appliedOffer.minCartValue) {
@@ -59,7 +58,7 @@ const App: React.FC = () => {
       id: Math.random().toString(36).substr(2, 9),
       items,
       subtotal,
-      itemGstBreakdown: items.map(i => ({ name: i.name, rate: i.gstRate, amount: (i.price * i.quantity * i.gstRate) / 100 })),
+      itemGstBreakdown: items.map((i: CartItem) => ({ name: i.name, rate: i.gstRate, amount: (i.price * i.quantity * i.gstRate) / 100 })),
       totalGst,
       deliveryCharge,
       discount: calculatedDiscount,
@@ -76,11 +75,11 @@ const App: React.FC = () => {
   }, [userSession]);
 
   const updateOrderStatus = (id: string, status: OrderStatus) => {
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+    setOrders(prev => prev.map((o: Order) => o.id === id ? { ...o, status } : o));
   };
 
   const updateMenuAvailability = (id: string, available: boolean) => {
-    setMenu(prev => prev.map(m => m.id === id ? { ...m, isAvailable: available } : m));
+    setMenu(prev => prev.map((m: MenuItem) => m.id === id ? { ...m, isAvailable: available } : m));
   };
 
   const addDish = (dish: Omit<MenuItem, 'id'>) => {
@@ -88,7 +87,7 @@ const App: React.FC = () => {
   };
 
   const deleteDish = (id: string) => {
-    setMenu(prev => prev.filter(m => m.id !== id));
+    setMenu(prev => prev.filter((m: MenuItem) => m.id !== id));
   };
 
   if (viewMode === 'auth') return <AuthView onLogin={handleLogin} />;
@@ -103,7 +102,7 @@ const App: React.FC = () => {
       freeDeliveryThreshold={freeDeliveryThreshold}
       onSetFreeDeliveryThreshold={setFreeDeliveryThreshold}
       offers={offers}
-      onSetOffers={setOffers}
+      onSetOffers={() => {}}
       onUpdateOrderStatus={updateOrderStatus}
       onUpdateMenuAvailability={updateMenuAvailability}
       onSetRestaurantLive={setIsRestaurantLive}
