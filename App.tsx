@@ -58,7 +58,11 @@ const App: React.FC = () => {
       id: Math.random().toString(36).substr(2, 9),
       items,
       subtotal,
-      itemGstBreakdown: items.map((i: CartItem) => ({ name: i.name, rate: i.gstRate, amount: (i.price * i.quantity * i.gstRate) / 100 })),
+      itemGstBreakdown: items.map((i: CartItem) => ({ 
+        name: i.name, 
+        rate: i.gstRate, 
+        amount: (i.price * i.quantity * i.gstRate) / 100 
+      })),
       totalGst,
       deliveryCharge,
       discount: calculatedDiscount,

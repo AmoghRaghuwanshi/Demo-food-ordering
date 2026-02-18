@@ -30,7 +30,7 @@ const CustomerView: React.FC<CustomerViewProps> = ({
   const mapInstanceRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
 
-  const cartSubtotal = useMemo(() => cart.reduce((acc, item) => acc + (item.price * item.quantity), 0), [cart]);
+  const cartSubtotal = useMemo(() => cart.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0), [cart]);
   
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; 
@@ -68,7 +68,7 @@ const CustomerView: React.FC<CustomerViewProps> = ({
     return calculated;
   }, [distance, deliveryRatePerKm, cartSubtotal, discount, freeDeliveryThreshold]);
 
-  const totalGst = useMemo(() => cart.reduce((acc, item) => acc + (item.price * item.quantity * item.gstRate) / 100, 0), [cart]);
+  const totalGst = useMemo(() => cart.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity * item.gstRate) / 100, 0), [cart]);
   const cartTotal = cartSubtotal + totalGst + deliveryCharge - discount;
 
   useEffect(() => {
@@ -169,7 +169,11 @@ const CustomerView: React.FC<CustomerViewProps> = ({
                   </div>
                 ))}
                 <div id="checkout-map" className="h-64 rounded-2xl bg-slate-100"></div>
-                <Button className="w-full py-4" disabled={!selectedLocation || !addressDetails.houseNo || !isRestaurantLive} onClick={() => {
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <input placeholder="H.No" className="p-3 border rounded-xl" onChange={e => setAddressDetails({...addressDetails, houseNo: e.target.value})} />
+                  <input placeholder="Area" className="p-3 border rounded-xl" onChange={e => setAddressDetails({...addressDetails, area: e.target.value})} />
+                </div>
+                <Button className="w-full py-4 mt-4" disabled={!selectedLocation || !addressDetails.houseNo || !isRestaurantLive} onClick={() => {
                    onPlaceOrder(cart, cartSubtotal, { ...addressDetails, fullAddress: `${addressDetails.houseNo}, ${addressDetails.area}` }, deliveryCharge, appliedOffer, selectedLocation!);
                    setCart([]); setActiveTab('track');
                 }}>Place Order ₹{cartTotal.toFixed(0)}</Button>
@@ -191,21 +195,21 @@ const CustomerView: React.FC<CustomerViewProps> = ({
         )}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex justify-around h-20 max-w-md mx-auto">
-         <button onClick={() => setActiveTab('menu')} className={activeTab === 'menu' ? 'text-orange-500' : 'text-slate-400'}>MENU</button>
-         <button onClick={() => setActiveTab('cart')} className={activeTab === 'cart' ? 'text-orange-500' : 'text-slate-400'}>CART</button>
-         <button onClick={() => setActiveTab('track')} className={activeTab === 'track' ? 'text-orange-500' : 'text-slate-400'}>TRACK</button>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex justify-around h-20 max-w-md mx-auto z-50">
+         <button onClick={() => setActiveTab('menu')} className={activeTab === 'menu' ? 'text-orange-500' : 'text-slate-400 font-bold text-xs'}>MENU</button>
+         <button onClick={() => setActiveTab('cart')} className={activeTab === 'cart' ? 'text-orange-500' : 'text-slate-400 font-bold text-xs'}>CART</button>
+         <button onClick={() => setActiveTab('track')} className={activeTab === 'track' ? 'text-orange-500' : 'text-slate-400 font-bold text-xs'}>TRACK</button>
       </nav>
 
       {selectedOrderForInvoice && (
         <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white p-6 rounded-3xl w-full max-w-sm">
-            <h3 className="font-black text-lg mb-4">Order Details</h3>
+            <h3 className="font-black text-lg mb-4 text-slate-900">Order Details</h3>
             <div className="space-y-2 mb-6">
               {selectedOrderForInvoice.items.map((i: CartItem) => (
-                <div key={i.id} className="flex justify-between text-sm"><span>{i.name} x {i.quantity}</span><span>₹{i.price * i.quantity}</span></div>
+                <div key={i.id} className="flex justify-between text-sm text-slate-600"><span>{i.name} x {i.quantity}</span><span>₹{i.price * i.quantity}</span></div>
               ))}
-              <div className="border-t pt-2 font-black flex justify-between"><span>Total</span><span>₹{selectedOrderForInvoice.total}</span></div>
+              <div className="border-t pt-2 font-black flex justify-between text-slate-900"><span>Total</span><span>₹{selectedOrderForInvoice.total}</span></div>
             </div>
             <Button className="w-full" onClick={() => setSelectedOrderForInvoice(null)}>Close</Button>
           </div>
